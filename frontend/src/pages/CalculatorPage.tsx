@@ -46,25 +46,22 @@ export default function CalculatorPage() {
             <button
               key={s.id}
               onClick={() => s.id <= (resultado ? 3 : step) && setStep(s.id)}
-              className={`relative z-10 flex flex-col items-center gap-1.5 transition-all ${
-                s.id <= step ? "cursor-pointer" : "cursor-default"
-              }`}
+              className={`relative z-10 flex flex-col items-center gap-1.5 transition-all ${s.id <= step ? "cursor-pointer" : "cursor-default"
+                }`}
             >
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-base transition-all duration-300 ${
-                  s.id === step
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-base transition-all duration-300 ${s.id === step
                     ? "bg-forest-500 text-white shadow-lg shadow-forest-500/30 scale-110"
                     : s.id < step
-                    ? "bg-forest-600/30 text-forest-400 border border-forest-500/40"
-                    : "bg-carbon-800 text-carbon-500 border border-carbon-700"
-                }`}
+                      ? "bg-forest-600/30 text-forest-400 border border-forest-500/40"
+                      : "bg-carbon-800 text-carbon-500 border border-carbon-700"
+                  }`}
               >
                 {s.emoji}
               </div>
               <span
-                className={`text-[0.65rem] font-medium transition-colors ${
-                  s.id === step ? "text-forest-300" : "text-carbon-500"
-                }`}
+                className={`text-[0.65rem] font-medium transition-colors ${s.id === step ? "text-forest-300" : "text-carbon-500"
+                  }`}
               >
                 {s.label}
               </span>
