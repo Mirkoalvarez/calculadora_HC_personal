@@ -1,0 +1,312 @@
+{
+	"info": {
+		"name": "Calculadora HC Personal",
+		"description": "Colección completa para testear la API de la Calculadora de Huella de Carbono Personal.\n\nFlujo: Register → Login → Calcular → Historial",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{ "key": "base_url", "value": "http://localhost:8000" },
+		{ "key": "access_token", "value": "" },
+		{ "key": "refresh_token", "value": "" }
+	],
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "1. Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    pm.test('Usuario creado exitosamente', function () {",
+									"        var json = pm.response.json();",
+									"        pm.expect(json.user).to.have.property('username');",
+									"        pm.expect(json.message).to.eql('Usuario creado exitosamente.');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"mirko\",\n    \"email\": \"mirko@example.com\",\n    \"password\": \"MiPassword123!\",\n    \"password_confirm\": \"MiPassword123!\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/auth/register/", "host": ["{{base_url}}"], "path": ["api", "auth", "register", ""] }
+					}
+				},
+				{
+					"name": "2. Login (Obtener JWT)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('access_token', json.access);",
+									"    pm.collectionVariables.set('refresh_token', json.refresh);",
+									"    pm.test('Tokens obtenidos', function () {",
+									"        pm.expect(json).to.have.property('access');",
+									"        pm.expect(json).to.have.property('refresh');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"mirko\",\n    \"password\": \"MiPassword123!\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/auth/token/", "host": ["{{base_url}}"], "path": ["api", "auth", "token", ""] }
+					}
+				},
+				{
+					"name": "3. Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var json = pm.response.json();",
+									"    pm.collectionVariables.set('access_token', json.access);",
+									"    if (json.refresh) pm.collectionVariables.set('refresh_token', json.refresh);",
+									"    pm.test('Token renovado', function () {",
+									"        pm.expect(json).to.have.property('access');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"refresh\": \"{{refresh_token}}\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/auth/token/refresh/", "host": ["{{base_url}}"], "path": ["api", "auth", "token", "refresh", ""] }
+					}
+				},
+				{
+					"name": "4. Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": { "raw": "{{base_url}}/api/auth/profile/", "host": ["{{base_url}}"], "path": ["api", "auth", "profile", ""] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Calculator",
+			"item": [
+				{
+					"name": "1. Opciones (público)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": { "raw": "{{base_url}}/api/calculator/opciones/", "host": ["{{base_url}}"], "path": ["api", "calculator", "opciones", ""] }
+					}
+				},
+				{
+					"name": "2. Calcular - Completo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var json = pm.response.json();",
+									"    pm.test('Cálculo exitoso', function () {",
+									"        pm.expect(json).to.have.property('total_kgco2');",
+									"        pm.expect(json).to.have.property('total_arboles');",
+									"        pm.expect(json).to.have.property('detalle');",
+									"        pm.expect(json.total_kgco2).to.be.above(0);",
+									"    });",
+									"    pm.environment.set('calc_id', json.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"electrodomesticos\": [\n            {\"aparato\": \"PC Escritorio\", \"cantidad\": 1, \"horas_dia\": 8},\n            {\"aparato\": \"Heladera\", \"cantidad\": 1, \"horas_dia\": 24},\n            {\"aparato\": \"Microondas\", \"cantidad\": 1, \"horas_dia\": 0.5},\n            {\"aparato\": \"Pava eléctrica\", \"cantidad\": 1, \"horas_dia\": 0.25}\n        ],\n        \"luminarias\": [\n            {\"tipo\": \"Led\", \"potencia\": \"9W\", \"cantidad\": 10, \"uso_diario\": \"1 Hora\"},\n            {\"tipo\": \"Tubo fluorescente\", \"potencia\": \"36W\", \"cantidad\": 4, \"uso_diario\": \"2 Horas\"},\n            {\"tipo\": \"Incandescente\", \"potencia\": \"60W\", \"cantidad\": 2, \"uso_diario\": \"30 Minutos\"}\n        ]\n    },\n    \"clima\": {\n        \"calefaccion\": [\n            {\"aparato\": \"Estufa a gas\", \"horas_dia\": 4},\n            {\"aparato\": \"Caloventor\", \"horas_dia\": 2}\n        ],\n        \"refrigeracion\": [\n            {\"aparato\": \"Aire Acondicionado\", \"horas_dia\": 6},\n            {\"aparato\": \"Ventilador\", \"horas_dia\": 8}\n        ]\n    },\n    \"transporte\": {\n        \"laboral\": [\n            {\"vehiculo\": \"Auto Nafta\", \"km_ida\": 15, \"km_vuelta\": 15},\n            {\"vehiculo\": \"Colectivo\", \"km_ida\": 5, \"km_vuelta\": 5}\n        ],\n        \"esporadico\": [\n            {\"vehiculo\": \"Avión\", \"km_totales\": 2000},\n            {\"vehiculo\": \"Combi\", \"km_totales\": 300}\n        ]\n    },\n    \"label\": \"Test completo desde Postman\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "3. Calcular - Solo Artefactos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"electrodomesticos\": [\n            {\"aparato\": \"PC Portátil\", \"cantidad\": 1, \"horas_dia\": 8},\n            {\"aparato\": \"Dispenser\", \"cantidad\": 1, \"horas_dia\": 10}\n        ],\n        \"luminarias\": [\n            {\"tipo\": \"Led\", \"potencia\": \"11W\", \"cantidad\": 6, \"uso_diario\": \"2 Horas\"}\n        ]\n    },\n    \"label\": \"Solo artefactos\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "4. Calcular - Solo Transporte",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"transporte\": {\n        \"laboral\": [\n            {\"vehiculo\": \"Bicicleta\", \"km_ida\": 5, \"km_vuelta\": 5},\n            {\"vehiculo\": \"Moto\", \"km_ida\": 10, \"km_vuelta\": 10}\n        ],\n        \"esporadico\": [\n            {\"vehiculo\": \"Auto Diesel\", \"km_totales\": 500}\n        ]\n    },\n    \"label\": \"Solo transporte\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "5. Calcular - Vacío (todo en 0)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"label\": \"Huella cero\"\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "6. Historial - Listar",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": { "raw": "{{base_url}}/api/calculator/historial/", "host": ["{{base_url}}"], "path": ["api", "calculator", "historial", ""] }
+					}
+				},
+				{
+					"name": "7. Historial - Detalle (id=1)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": { "raw": "{{base_url}}/api/calculator/historial/1/", "host": ["{{base_url}}"], "path": ["api", "calculator", "historial", "1", ""] }
+					}
+				},
+				{
+					"name": "8. Historial - Eliminar (id=1)",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"url": { "raw": "{{base_url}}/api/calculator/historial/1/", "host": ["{{base_url}}"], "path": ["api", "calculator", "historial", "1", ""] }
+					}
+				}
+			]
+		},
+		{
+			"name": "Errores (Validación)",
+			"item": [
+				{
+					"name": "Aparato inválido → 400",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"electrodomesticos\": [\n            {\"aparato\": \"Tostadora Inexistente\", \"cantidad\": 1, \"horas_dia\": 2}\n        ]\n    }\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "Luminaria inválida → 400",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"luminarias\": [\n            {\"tipo\": \"Led\", \"potencia\": \"999W\", \"cantidad\": 1, \"uso_diario\": \"1 Hora\"}\n        ]\n    }\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "Sin auth → 401",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"electrodomesticos\": [\n            {\"aparato\": \"PC Escritorio\", \"cantidad\": 1, \"horas_dia\": 8}\n        ]\n    }\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				},
+				{
+					"name": "Cantidad negativa → 400",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Content-Type", "value": "application/json" },
+							{ "key": "Authorization", "value": "Bearer {{access_token}}" }
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"artefactos\": {\n        \"electrodomesticos\": [\n            {\"aparato\": \"PC Escritorio\", \"cantidad\": -5, \"horas_dia\": 8}\n        ]\n    }\n}"
+						},
+						"url": { "raw": "{{base_url}}/api/calculator/calcular/", "host": ["{{base_url}}"], "path": ["api", "calculator", "calcular", ""] }
+					}
+				}
+			]
+		}
+	]
+}
