@@ -1,0 +1,114 @@
+# Backend Completado — Calculadora HC Personal
+
+## Lo que se implementó
+
+### Fase 1: Setup + Auth
+- Proyecto Django 6 con estructura de capas
+- Custom User model (`AbstractUser`)
+- JWT auth completa (register, login, refresh, profile)
+- CORS configurado para React en `localhost:5173`
+- SQLite configurado, listo para migrar a PostgreSQL
+
+### Fase 2: Lógica de Cálculo (Service Layer)
+- [artefactos.py](file:///c:/Users/Mirko%20Alvarez/Desktop/calculadora_HC_personal/backend/apps/calculator/services/artefactos.py) — Electrodomésticos + Luminarias
+- [clima.py](file:///c:/Users/Mirko%20Alvarez/Desktop/calculadora_HC_personal/backend/apps/calculator/services/clima.py) — Calefacción + Refrigeración
+- [transporte.py](file:///c:/Users/Mirko%20Alvarez/Desktop/calculadora_HC_personal/backend/apps/calculator/services/transporte.py) — Laboral + Esporádico
+- [calculator.py](file:///c:/Users/Mirko%20Alvarez/Desktop/calculadora_HC_personal/backend/apps/calculator/services/calculator.py) — Orquestador total
+
+### Fase 3: API REST
+- `GET /api/calculator/opciones/` — Público, lista todas las opciones
+- `POST /api/calculator/calcular/` — Calcula y guarda en historial (🔒 JWT)
+- `GET /api/calculator/historial/` — Lista historial del usuario (🔒 JWT)
+- `GET/DELETE /api/calculator/historial/<id>/` — Detalle/borrar (🔒 JWT)
+
+### Fase 4: Testing
+- **21 tests unitarios** pasando al 100%
+- Cobertura de todos los módulos de cálculo
+- Tests de edge cases (listas vacías, cantidades 0, input parcial)
+
+## Tests ✅
+
+```
+21 passed in 0.10s
+
+TestElectrodomesticos    ✅ 5/5
+TestLuminarias           ✅ 4/4
+TestCalefaccion          ✅ 2/2
+TestRefrigeracion        ✅ 2/2
+TestTransporteLaboral    ✅ 3/3
+TestTransporteEsporadico ✅ 2/2
+TestCalcularHuellaTotal  ✅ 3/3
+```
+
+## API Probada en Browser
+
+Flujo completo verificado:
+1. ✅ Registro de usuario → 201 Created
+2. ✅ Login JWT → access + refresh tokens
+3. ✅ Cálculo completo → resultado correcto
+
+### Resultado del cálculo de prueba:
+```json
+{
+  "total_kgco2": 4042.919,
+  "total_arboles": 404.2919,
+  "detalle": {
+    "artefactos_kgco2": 833.7114,
+    "clima_kgco2": 598.8476,
+    "transporte_kgco2": 2610.36
+  }
+}
+```
+
+## Grabación del flujo completo
+
+![Test del flujo completo de la API](C:/Users/Mirko Alvarez/.gemini/antigravity/brain/221aa69b-db89-4d25-bade-7413d4718048/test_full_api_flow_1779206509053.webp)
+
+## Estructura final
+
+```
+calculadora_HC_personal/
+├── .gitignore
+├── README.md
+├── backend/
+│   ├── config/
+│   │   ├── settings.py          # Django + DRF + JWT + CORS
+│   │   ├── urls.py              # Routing principal
+│   │   ├── wsgi.py
+│   │   └── asgi.py
+│   ├── apps/
+│   │   ├── accounts/
+│   │   │   ├── models.py        # Custom User
+│   │   │   ├── serializers.py   # Register + Profile
+│   │   │   ├── views.py         # Register + Profile views
+│   │   │   ├── urls.py          # Auth routes
+│   │   │   ├── admin.py
+│   │   │   └── apps.py
+│   │   └── calculator/
+│   │       ├── constants.py     # Todos los factores de emisión
+│   │       ├── models.py        # CalculationRecord
+│   │       ├── serializers.py   # Validación de input/output
+│   │       ├── views.py         # API endpoints
+│   │       ├── urls.py          # Calculator routes
+│   │       ├── admin.py         # Admin panel config
+│   │       ├── apps.py
+│   │       ├── services/
+│   │       │   ├── artefactos.py
+│   │       │   ├── clima.py
+│   │       │   ├── transporte.py
+│   │       │   └── calculator.py
+│   │       └── tests/
+│   │           └── test_services.py  # 21 tests
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── pytest.ini
+│   └── db.sqlite3
+└── frontend/                    # 📋 Próxima fase
+```
+
+## Próximos pasos
+
+- [ ] **Frontend** — React 19 + Vite 8 + Tailwind v4 + Framer Motion
+- [ ] Tests de integración para los endpoints API
+- [ ] Admin panel con superusuario
+- [ ] Deploy (Render/Railway para Django, Vercel para React)
