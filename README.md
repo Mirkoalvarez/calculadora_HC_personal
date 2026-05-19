@@ -8,13 +8,19 @@ Calculadora web que estima las emisiones de CO₂ equivalente (kgCO₂eq) anuale
 - **Django 6** + Django REST Framework
 - **JWT Auth** (djangorestframework-simplejwt)
 - **SQLite** (dev) / PostgreSQL (prod)
-- **pytest** para testing
+- **pytest** — 21 tests unitarios
 
-### Frontend (en desarrollo)
-- React 19 + TypeScript + Vite 8
-- Tailwind CSS v4 + Framer Motion
+### Frontend
+- **React 19** + TypeScript
+- **Vite 8** (build tool + proxy a Django)
+- **Tailwind CSS v4** (design tokens custom)
+- **Framer Motion** (transiciones wizard)
+- **React Icons** (Heroicons)
+- **Fuentes**: Instrument Serif (headings) · Barlow (body)
 
 ## Setup
+
+### Terminal 1 — Backend
 
 ```bash
 # 1. Clonar el repo
@@ -30,7 +36,7 @@ pip install -r backend/requirements.txt
 cd backend
 python manage.py migrate
 
-# 4. Crear superusuario (para admin panel)
+# 4. Crear superusuario (opcional, para admin panel)
 python manage.py createsuperuser
 
 # 5. Correr el servidor
@@ -39,6 +45,20 @@ python manage.py runserver 8000
 # 6. Correr tests
 pytest -v
 ```
+
+### Terminal 2 — Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Abrí **http://localhost:5173/** — Vite proxea `/api` al Django en `:8000`.
+
+### Postman
+
+Importá `backend/postman_collection.json` para testear la API completa.
 
 ## API Endpoints
 
@@ -101,14 +121,28 @@ Authorization: Bearer <token>
 ## Arquitectura
 
 ```
-backend/
-├── config/            # Django settings, URLs
-├── apps/
-│   ├── accounts/      # Auth (User, JWT)
-│   └── calculator/    # Lógica de cálculo
-│       ├── services/  # Lógica pura (testeada)
-│       ├── models.py  # CalculationRecord
-│       ├── serializers.py
-│       └── views.py   # API endpoints
-└── requirements.txt
+calculadora_HC_personal/
+├── backend/
+│   ├── config/                # Django settings, URLs, CORS, JWT
+│   ├── apps/
+│   │   ├── accounts/          # Auth (User, JWT, register/login)
+│   │   └── calculator/
+│   │       ├── services/      # Lógica pura de cálculo (testeada)
+│   │       ├── constants.py   # Factores de emisión
+│   │       ├── models.py      # CalculationRecord
+│   │       ├── serializers.py # Validación input/output
+│   │       └── views.py       # API endpoints
+│   ├── requirements.txt
+│   └── postman_collection.json
+│
+└── frontend/
+    └── src/
+        ├── context/           # AuthContext + CalculatorContext
+        ├── services/          # API client (axios + JWT interceptor)
+        ├── pages/             # Login, Register, Calculator, Historial
+        ├── components/
+        │   ├── Navbar.tsx
+        │   └── steps/         # ArtefactosStep, ClimaStep, TransporteStep, ResultadosStep
+        ├── types.ts           # Interfaces TypeScript
+        └── index.css          # Tailwind v4 + design tokens
 ```
