@@ -27,7 +27,7 @@ export default function HistorialPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-20">
-        <div className="w-8 h-8 border-2 border-forest-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-aether-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -36,8 +36,8 @@ export default function HistorialPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-heading text-3xl text-forest-300">📋 Historial</h2>
-          <p className="text-carbon-500 text-sm mt-1">Tus cálculos guardados</p>
+          <h2 className="font-heading text-3xl text-aether-800">📋 Historial</h2>
+          <p className="text-surface-500 text-sm mt-1">Tus cálculos guardados</p>
         </div>
         <button onClick={fetchHistorial} className="btn-secondary text-xs flex items-center gap-1.5">
           <HiOutlineArrowPath className="w-3.5 h-3.5" /> Actualizar
@@ -45,10 +45,10 @@ export default function HistorialPage() {
       </div>
 
       {items.length === 0 ? (
-        <div className="glass-card p-12 text-center">
+        <div className="liquid-glass p-12 text-center">
           <span className="text-5xl block mb-4">🌱</span>
-          <p className="text-carbon-400">Aún no tenés cálculos guardados.</p>
-          <p className="text-carbon-500 text-sm mt-1">Usá la calculadora para crear tu primer registro.</p>
+          <p className="text-surface-600">Aún no tenés cálculos guardados.</p>
+          <p className="text-surface-400 text-sm mt-1">Usá la calculadora para crear tu primer registro.</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -58,17 +58,17 @@ export default function HistorialPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="glass-card p-4 flex items-center justify-between gap-4"
+              className="liquid-glass p-4 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-4 flex-1 min-w-0">
-                <div className="w-12 h-12 rounded-xl bg-forest-500/10 flex items-center justify-center text-xl shrink-0">
+                <div className="w-12 h-12 rounded-xl bg-aether-100 flex items-center justify-center text-xl shrink-0">
                   🌍
                 </div>
                 <div className="min-w-0">
-                  <p className="text-carbon-200 font-medium truncate">
+                  <p className="text-surface-800 font-medium truncate">
                     {item.label || `Cálculo #${item.id}`}
                   </p>
-                  <p className="text-xs text-carbon-500">
+                  <p className="text-xs text-surface-400">
                     {new Date(item.created_at).toLocaleDateString("es-AR", {
                       day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
                     })}
@@ -77,15 +77,15 @@ export default function HistorialPage() {
               </div>
 
               <div className="text-right shrink-0">
-                <p className="text-lg font-heading text-forest-400">
+                <p className="text-lg font-heading text-aether-700">
                   {item.total_kgco2.toLocaleString("es-AR", { maximumFractionDigits: 1 })}
                 </p>
-                <p className="text-[0.65rem] text-carbon-500">kgCO₂eq</p>
+                <p className="text-[0.65rem] text-surface-400">kgCO₂eq</p>
               </div>
 
               <div className="text-right shrink-0">
-                <p className="text-sm text-carbon-300">🌳 {item.total_arboles.toLocaleString("es-AR", { maximumFractionDigits: 1 })}</p>
-                <p className="text-[0.65rem] text-carbon-500">árboles</p>
+                <p className="text-sm text-surface-700">🌳 {item.total_arboles.toLocaleString("es-AR", { maximumFractionDigits: 1 })}</p>
+                <p className="text-[0.65rem] text-surface-400">árboles</p>
               </div>
 
               <button onClick={() => handleDelete(item.id)} className="btn-danger shrink-0">

@@ -34,13 +34,13 @@ export default function CalculatorPage() {
   return (
     <div className="space-y-6">
       {/* Progress Bar */}
-      <div className="glass-card p-4">
+      <div className="liquid-glass p-4">
         <div className="flex items-center justify-between relative">
-          {/* Line */}
-          <div className="absolute top-5 left-0 right-0 h-0.5 bg-carbon-800 mx-12" />
+          {/* Track line (spans center-to-center of first and last circles) */}
+          <div className="absolute top-5 h-0.5 bg-surface-200" style={{ left: '1.25rem', right: '1.25rem' }} />
           <div
-            className="absolute top-5 left-0 h-0.5 bg-gradient-to-r from-forest-600 to-forest-400 mx-12 transition-all duration-500"
-            style={{ width: `${(step / 3) * (100 - 14)}%` }}
+            className="absolute top-5 h-0.5 bg-gradient-to-r from-aether-600 to-aether-400 transition-all duration-500"
+            style={{ left: '1.25rem', width: `calc(${(step / 3) * 100}% - ${(step / 3) * 2.5}rem)` }}
           />
           {STEPS.map((s) => (
             <button
@@ -51,16 +51,16 @@ export default function CalculatorPage() {
             >
               <div
                 className={`w-10 h-10 rounded-full flex items-center justify-center text-base transition-all duration-300 ${s.id === step
-                    ? "bg-forest-500 text-white shadow-lg shadow-forest-500/30 scale-110"
+                    ? "bg-aether-500 text-white shadow-lg shadow-aether-500/30 scale-110"
                     : s.id < step
-                      ? "bg-forest-600/30 text-forest-400 border border-forest-500/40"
-                      : "bg-carbon-800 text-carbon-500 border border-carbon-700"
+                      ? "bg-aether-100 text-aether-600 border border-aether-300"
+                      : "bg-surface-100 text-surface-400 border border-surface-200"
                   }`}
               >
                 {s.emoji}
               </div>
               <span
-                className={`text-[0.65rem] font-medium transition-colors ${s.id === step ? "text-forest-300" : "text-carbon-500"
+                className={`text-[0.65rem] font-medium transition-colors ${s.id === step ? "text-aether-700" : "text-surface-400"
                   }`}
               >
                 {s.label}

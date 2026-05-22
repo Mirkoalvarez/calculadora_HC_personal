@@ -31,19 +31,19 @@ export default function LoginPage() {
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="glass-card glow-green p-8 w-full max-w-md"
+        className="liquid-glass glow-aether p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
           <span className="text-4xl block mb-3">🌿</span>
-          <h2 className="font-heading text-3xl text-forest-300">Iniciar Sesión</h2>
-          <p className="text-carbon-400 text-sm mt-1">
+          <h2 className="font-heading text-3xl text-aether-800">Iniciar Sesión</h2>
+          <p className="text-surface-500 text-sm mt-1">
             Calculá tu huella de carbono personal
           </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs text-carbon-400 mb-1.5 font-medium uppercase tracking-wider">
+            <label className="block text-xs text-surface-500 mb-1.5 font-medium uppercase tracking-wider">
               Usuario
             </label>
             <input
@@ -58,7 +58,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-xs text-carbon-400 mb-1.5 font-medium uppercase tracking-wider">
+            <label className="block text-xs text-surface-500 mb-1.5 font-medium uppercase tracking-wider">
               Contraseña
             </label>
             <div className="relative">
@@ -73,7 +73,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-carbon-500 hover:text-carbon-300"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-400 hover:text-surface-600"
               >
                 {showPw ? <HiOutlineEyeSlash className="w-4 h-4" /> : <HiOutlineEye className="w-4 h-4" />}
               </button>
@@ -84,7 +84,7 @@ export default function LoginPage() {
             <motion.p
               initial={{ opacity: 0, y: -5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-red-400 text-sm bg-red-500/10 px-3 py-2 rounded-md"
+              className="text-red-600 text-sm bg-red-500/10 px-3 py-2 rounded-xl"
             >
               {error}
             </motion.p>
@@ -99,9 +99,9 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-carbon-500 text-sm mt-6">
+        <p className="text-center text-surface-500 text-sm mt-6">
           ¿No tenés cuenta?{" "}
-          <Link to="/register" className="text-forest-400 hover:text-forest-300 font-medium">
+          <Link to="/register" className="text-aether-600 hover:text-aether-700 font-medium">
             Registrate
           </Link>
         </p>

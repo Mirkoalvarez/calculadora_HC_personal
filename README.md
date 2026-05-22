@@ -41,6 +41,7 @@ python manage.py createsuperuser
 
 # 5. Correr el servidor
 python manage.py runserver 8000
+cd backend && ..\venv\Scripts\activate && python manage.py runserver 8000
 
 # 6. Correr tests
 pytest -v
@@ -54,7 +55,7 @@ npm install
 npm run dev
 ```
 
-Abrí **http://localhost:5173/** — Vite proxea `/api` al Django en `:8000`.
+Abrí **http://localhost:5180/** — Vite proxea `/api` al Django en `:8000`.
 
 ### Postman
 
